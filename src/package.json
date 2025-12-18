@@ -1,0 +1,27 @@
+{
+  "name": "task",
+  "version": "1.0.0",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "devDependencies": {
+    "eslint-plugin-import": "^2.31.0",
+    "typescript": "^5.9.2"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "commonjs",
+  "scripts": {
+    "eslint": "npx eslint .",
+    "typecheck": "tsc --noEmit -p jsconfig.json"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
+    "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
+    "mysql2": "^3.11.3"
+  }
+}

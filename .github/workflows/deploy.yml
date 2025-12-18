@@ -1,0 +1,93 @@
+name: Deploy Image
+
+on:
+  push:
+    branches: ["master"] #[ "master", "stage", "dev" ]
+
+env:
+  AWS_REGION: ap-northeast-2
+  AWS_ROLE_NAME: ${{ secrets.AWS_ROLE_NAME }}
+  ECR_URL: ${{ secrets.ECR_URL }} # ECR을 공통으로 쓰고 태그로 구분
+  
+concurrency:
+  group: ${{ github.ref }}-deploy
+  cancel-in-progress: false
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 23
+
+      - name: Install
+        run: |
+          npm i
+        working-directory: src
+
+      - name: Build
+        run: |
+          npm run eslint
+        working-directory: src
+
+  build:
+    runs-on: ubuntu-22.04
+    needs: check
+    environment:
+      name: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 23
+
+      - name: ENV Set
+        run: |
+          HASH=$(git rev-parse --short HEAD)
+          DATE=$(TZ=Asia/Seoul date "+%Y-%m-%d %H:%M")
+          
+          echo "TAG_NAME=${HASH}" >> $GITHUB_ENV
+          echo "BUILD_DATE=${DATE}" >> $GITHUB_ENV
+          echo "$GITHUB_CONTEXT"
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            --platform linux/amd64 \
+            --provenance=false \
+            --build-arg GIT_HASH="${{ env.TAG_NAME }}" \
+            --build-arg BUILD_DATE="${{ env.BUILD_DATE }}" \
+            -t ${{ env.ECR_URL }}:${{ env.TAG_NAME }} \
+            -t ${{ env.ECR_URL }}:latest \
+            .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_NAME }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          mask-password: 'true'
+          registry-type: public
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ env.ECR_URL }}:${{ env.TAG_NAME }}
+          docker push ${{ env.ECR_URL }}:latest
+
+          docker rmi ${{ env.ECR_URL }}:${{ env.TAG_NAME }}
+          docker rmi ${{ env.ECR_URL }}:latest          
+
+    outputs:
+      TAG_NAME: ${{ env.TAG_NAME }}
+
