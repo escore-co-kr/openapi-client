@@ -33,6 +33,10 @@ class SyncAPI {
         this.#checkThrottle = checkThrottle;
     }
 
+    get permision() {
+        return `/${this.#api}`;
+    }
+
     /**
      * 
      * @param {import("mysql2/promise").Connection} conn 
@@ -44,9 +48,12 @@ class SyncAPI {
             const { lastChecked, ...context } = await cursor.getCurContext() ?? {};
             if (this.#fullScan == true && Date.now() - lastChecked < this.#checkThrottle) return;
             const res = await API.get(`/${this.#api}${getQueryString(context)}`);
-            if (res.status != 200) return; // 에러나면 무시
+            if (res.status != 200) {
+                if (process.env.DEBUG == "true") console.error(`/${this.#api}${getQueryString(context)} -> ${res.status}`);
+                return; // 에러나면 무시
+            }
 
-            
+
             const results = /** @type {{ code: string, data: { items: string[], nextToken?: string }}} */ (res.data);
             console.log(this.#table, JSON.stringify(context), results.code, results.data.items.length);
             const items = results.data.items;
@@ -99,3 +106,9 @@ function detectFields(o) {
     return Object.keys(o)
         .map(k => ({ field: k, target: k.replace(/([a-z0-9])([A-Z])/g, "$1_$2").replace(/-/g, "_").toLowerCase() }));
 }
+
+SyncAPI.getPermissions = async () => {
+    const res = await API.get("/permission");
+    return res.data.items;
+};
+

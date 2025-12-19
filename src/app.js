@@ -6,6 +6,9 @@ const SyncAPI = require("./modules/SyncAPI");
 
 async function main() {
     console.time("MAIN");
+
+    const permisions = await SyncAPI.getPermissions();
+
     const conn = await getConnection();
     try {
         const [r] = await conn.query(`SELECT 1;`); // DB Check
@@ -13,6 +16,7 @@ async function main() {
 
         for (const mod of mods) {
             const syncMod = /** @type {SyncAPI} */ (mod);
+            if (permisions.includes(syncMod.permision) == false) continue;
             await syncMod.sync(conn);
         }
 
