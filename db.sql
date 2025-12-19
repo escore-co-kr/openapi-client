@@ -146,5 +146,41 @@ CREATE TABLE `player` (
   CONSTRAINT `fk_country_player` FOREIGN KEY (`country`) REFERENCES `country` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `lineup`;
+CREATE TABLE `lineup` (
+  `id` int NOT NULL,
+  `schedule_id` int NOT NULL,
+  `team_id` int NOT NULL,
+  `player_id` int DEFAULT NULL,
+  `is_starting` tinyint(1) DEFAULT NULL,
+  `type` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `meta` json DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT NULL,
+  `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_key` (`schedule_id`,`team_id`,`player_id`),
+  KEY `fk_lineup_player_id` (`player_id`),
+  KEY `fk_lineup_team_id` (`team_id`),
+  KEY `idx_updated_at` (`updated_at`,`id`),
+  CONSTRAINT `fk_lineup_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `player_stat`;
+CREATE TABLE `player_stat` (
+  `id` int NOT NULL,
+  `schedule_id` int NOT NULL,
+  `player_id` int NOT NULL,
+  `raw` json DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT NULL,
+  `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_key` (`schedule_id`,`player_id`),
+  KEY `fk_player_stat_player_id` (`player_id`),
+  KEY `idx_updated_at` (`updated_at`,`id`),
+  CONSTRAINT `fk_player_stat_player_id` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
+  CONSTRAINT `fk_player_stat_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;
