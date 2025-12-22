@@ -4,7 +4,7 @@ const { default: axios } = require("axios");
 
 
 const API = axios.create({
-    timeout: 5000,
+    timeout: 15000,
     baseURL: 'https://api.openapi.escore.co.kr/v1',
     headers: {
         "content-type": "application/json",
