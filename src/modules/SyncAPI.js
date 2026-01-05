@@ -67,9 +67,9 @@ class SyncAPI {
                     const updateFields = fields.filter(k => k.field != "id");
                     // console.log(fields, item, params)
                     await conn.query(`
-                        INSERT ${updateFields.length == 0 ? "IGNORE " : ""}INTO ${this.#table} (${fields.map(f => f.target).join(", ")})
+                        INSERT ${updateFields.length == 0 ? "IGNORE " : ""}INTO ${this.#table} (${fields.map(f => `\`${f.target}\``).join(", ")})
                         VALUES (${fields.map(k => k.target.endsWith("_at") ? "FROM_UNIXTIME(? / 1000)" : "?").join(", ")})
-                        ${updateFields.length > 0 ? `ON DUPLICATE KEY UPDATE ${updateFields.map(k => `${k.target}=VALUES(${k.target})`).join(", ")}` : ""}
+                        ${updateFields.length > 0 ? `ON DUPLICATE KEY UPDATE ${updateFields.map(k => `\`${k.target}\`=VALUES(\`${k.target}\`)`).join(", ")}` : ""}
                     `, params);
                 }
             }

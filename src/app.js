@@ -19,7 +19,9 @@ async function main() {
             if (permisions.includes(syncMod.permision) == false) continue;
             await syncMod.sync(conn);
         }
-
+    } catch (e) {
+        if (e instanceof Error != true) throw e;
+        console.error(JSON.stringify({ message: e.message, stack: e.stack }));
     } finally {
         try { await conn.end(); } catch { }
     }
@@ -31,7 +33,7 @@ async function main() {
 main();
 
 /**
- * @returns {Promise<import("mysql2/promise").Connection}
+ * @returns {Promise<import("mysql2/promise").Connection>}
  */
 async function getConnection() {
     while (true) {

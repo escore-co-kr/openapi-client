@@ -17,5 +17,6 @@ module.exports = [
     new SyncAPI("players", "player"),
     new SyncAPI("lineups", "lineup"),
     new SyncAPI("players/stats", "player_stat"),
+    new SyncAPI("bettings", "betting"),
 ];
 
