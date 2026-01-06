@@ -48,6 +48,11 @@ class SyncAPI {
             const { lastChecked, ...context } = await cursor.getCurContext() ?? {};
             if (this.#fullScan == true && Date.now() - lastChecked < this.#checkThrottle) return;
             const res = await API.get(`/${this.#api}${getQueryString(context)}`);
+            if (res.status == 429) {
+                // 쓰로틀
+                await new Promise(n => setTimeout(n, 500));
+                continue;
+            }
             if (res.status != 200) {
                 if (process.env.DEBUG == "true") console.error(`/${this.#api}${getQueryString(context)} -> ${res.status}`);
                 return; // 에러나면 무시

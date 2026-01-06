@@ -1,11 +1,16 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+CREATE DATABASE IF NOT EXISTS data
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE data;
+
 -- ----------------------------
 -- Table structure for key_store
 -- ----------------------------
-DROP TABLE IF EXISTS `key_store`;
-CREATE TABLE `key_store` (
+CREATE TABLE IF NOT EXISTS `key_store` (
   `name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `raw` JSON DEFAULT NULL,
   `memo` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -15,8 +20,7 @@ CREATE TABLE `key_store` (
 -- ----------------------------
 -- Table structure for sports
 -- ----------------------------
-DROP TABLE IF EXISTS `sports`;
-CREATE TABLE `sports` (
+CREATE TABLE IF NOT EXISTS `sports` (
   `id` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`)
@@ -25,8 +29,7 @@ CREATE TABLE `sports` (
 -- ----------------------------
 -- Table structure for country
 -- ----------------------------
-DROP TABLE IF EXISTS `country`;
-CREATE TABLE `country` (
+CREATE TABLE IF NOT EXISTS `country` (
   `id` CHAR(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_kr` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_en` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -40,8 +43,7 @@ CREATE TABLE `country` (
 -- ----------------------------
 -- Table structure for league
 -- ----------------------------
-DROP TABLE IF EXISTS `league`;
-CREATE TABLE `league` (
+CREATE TABLE IF NOT EXISTS `league` (
   `id` INT NOT NULL,
   `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -57,8 +59,7 @@ CREATE TABLE `league` (
 -- ----------------------------
 -- Table structure for season
 -- ----------------------------
-DROP TABLE IF EXISTS `season`;
-CREATE TABLE `season` (
+CREATE TABLE IF NOT EXISTS `season` (
   `id` INT NOT NULL,
   `league_id` INT DEFAULT NULL,
   `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -81,8 +82,7 @@ CREATE TABLE `season` (
 -- ----------------------------
 -- Table structure for team
 -- ----------------------------
-DROP TABLE IF EXISTS `team`;
-CREATE TABLE `team` (
+CREATE TABLE IF NOT EXISTS `team` (
   `id` INT NOT NULL,
   `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -98,8 +98,7 @@ CREATE TABLE `team` (
 -- ----------------------------
 -- Table structure for schedule
 -- ----------------------------
-DROP TABLE IF EXISTS `schedule`;
-CREATE TABLE `schedule` (
+CREATE TABLE IF NOT EXISTS `schedule` (
   `id` INT NOT NULL,
   `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `league_id` INT NOT NULL,
@@ -131,8 +130,7 @@ CREATE TABLE `schedule` (
   CONSTRAINT `fk_schedule_sports` FOREIGN KEY (`sports`) REFERENCES `sports` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `player`;
-CREATE TABLE `player` (
+CREATE TABLE IF NOT EXISTS `player` (
   `id` INT NOT NULL,
   `name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `profile` JSON DEFAULT NULL,
@@ -146,8 +144,7 @@ CREATE TABLE `player` (
   CONSTRAINT `fk_country_player` FOREIGN KEY (`country`) REFERENCES `country` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `lineup`;
-CREATE TABLE `lineup` (
+CREATE TABLE IF NOT EXISTS `lineup` (
   `id` INT NOT NULL,
   `schedule_id` INT NOT NULL,
   `team_id` INT NOT NULL,
@@ -166,8 +163,7 @@ CREATE TABLE `lineup` (
   CONSTRAINT `fk_lineup_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `player_stat`;
-CREATE TABLE `player_stat` (
+CREATE TABLE IF NOT EXISTS `player_stat` (
   `id` INT NOT NULL,
   `schedule_id` INT NOT NULL,
   `player_id` INT NOT NULL,
@@ -183,8 +179,7 @@ CREATE TABLE `player_stat` (
   CONSTRAINT `fk_player_stat_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `betting`;
-CREATE TABLE `betting`
+CREATE TABLE IF NOT EXISTS `betting`
 (
     `id` INT NOT NULL PRIMARY KEY,
     `schedule_id` INT NOT NULL,

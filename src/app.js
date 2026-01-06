@@ -3,8 +3,9 @@
 const mysql = require("mysql2/promise");
 const mods = require("./modules");
 const SyncAPI = require("./modules/SyncAPI");
+const fs = require("fs"), path = require("path");
 
-async function main() {
+async function mainLoop() {
     console.time("MAIN");
 
     const permisions = await SyncAPI.getPermissions();
@@ -18,6 +19,7 @@ async function main() {
             const syncMod = /** @type {SyncAPI} */ (mod);
             if (permisions.includes(syncMod.permision) == false) continue;
             await syncMod.sync(conn);
+            await new Promise(n => setTimeout(n, 100));
         }
     } catch (e) {
         if (e instanceof Error != true) throw e;
@@ -27,15 +29,50 @@ async function main() {
     }
 
     console.timeEnd("MAIN");
-    setTimeout(main, 5000);
+    setTimeout(mainLoop, 5000);
 }
 
-main();
+async function boot() {
+    if (process.env["API_KEY"] == null) {
+        console.error("Need API_KEY env");
+        process.exit(1);
+    }
+    console.time("BOOT");
+
+    console.log("CONNECT DB");
+    const conn = await getConnection(true);
+    try {
+        const sql = await fs.promises.readFile(path.resolve(__dirname, "db.sql"), "utf-8");
+        await conn.query(sql);
+
+        const [databases] = await conn.query(`SHOW DATABASES`);
+        // @ts-ignore
+        if (databases.some(d => d.Database == "data") == false) throw new Error("Error No Database");
+
+        // @ts-ignore
+        const [[, tables]] = await conn.query(`USE data; SHOW TABLES;`)
+        if (tables.length == 0) throw new Error("Error No Tables");
+
+        return true;
+    } catch (e) {
+        if (e instanceof Error != true) throw e;
+        console.error(JSON.stringify({ message: e.message, stack: e.stack }));
+    } finally {
+        try { await conn.end(); } catch { }
+    }
+    console.timeEnd("BOOT");
+}
+
+(async () => {
+    const success = await boot();
+    if (success != true) return;
+    await mainLoop();
+})();
 
 /**
  * @returns {Promise<import("mysql2/promise").Connection>}
  */
-async function getConnection() {
+async function getConnection(noDB = false) {
     while (true) {
         try {
             // @ts-ignore
@@ -44,7 +81,7 @@ async function getConnection() {
                 port: process.env.MYSQL_PORT ?? 3306,
                 user: process.env.MYSQL_USER ?? "root",
                 password: process.env.MYSQL_PASS ?? "password",
-                database: process.env.MYSQL_DATA ?? "database",
+                ...(noDB == false ? { database: process.env.MYSQL_DATA ?? "data" } : {}),
                 multipleStatements: true,
             });
         } catch {

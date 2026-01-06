@@ -9,7 +9,7 @@ module.exports = [
         converter: (o) => ({ field: "id", value: o }),
         checkThrottle: 60000,
     }),
-    new SyncAPI("countries", "country", { fullScan: true }),
+    new SyncAPI("countries", "country"),
     new SyncAPI("leagues", "league"),
     new SyncAPI("seasons", "season"),
     new SyncAPI("teams", "team"),
