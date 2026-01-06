@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `key_store` (
   `raw` JSON DEFAULT NULL,
   `memo` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- ----------------------------
 -- Table structure for sports
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `sports` (
   `id` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- ----------------------------
 -- Table structure for country
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `country` (
   `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`),
   KEY `idx_updated_at` (`updated_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- ----------------------------
 -- Table structure for league
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `league` (
   KEY `fk_league_sports` (`sports`),
   KEY `idx_updated_at_id` (`updated_at`,`id`),
   CONSTRAINT `fk_league_sports` FOREIGN KEY (`sports`) REFERENCES `sports` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- ----------------------------
 -- Table structure for season
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `season` (
   CONSTRAINT `fk_season_league` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`),
   CONSTRAINT `fk_season_sports` FOREIGN KEY (`sports`) REFERENCES `sports` (`id`),
   CONSTRAINT `check_sports_no_spaces` CHECK ((`sports` = trim(`sports`)))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- ----------------------------
 -- Table structure for team
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `team` (
   `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`),
   KEY `idx_updated_at_id` (`updated_at`,`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 -- ----------------------------
 -- Table structure for schedule
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `schedule` (
   CONSTRAINT `fk_schedule_league_id` FOREIGN KEY (`league_id`) REFERENCES `league` (`id`),
   CONSTRAINT `fk_schedule_season_id` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`),
   CONSTRAINT `fk_schedule_sports` FOREIGN KEY (`sports`) REFERENCES `sports` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 CREATE TABLE IF NOT EXISTS `player` (
   `id` INT NOT NULL,
@@ -142,7 +142,21 @@ CREATE TABLE IF NOT EXISTS `player` (
   KEY `fk_country_player` (`country`),
   KEY `idx_updated_at` (`updated_at`,`id`),
   CONSTRAINT `fk_country_player` FOREIGN KEY (`country`) REFERENCES `country` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
+
+CREATE TABLE IF NOT EXISTS `team_player` (
+  `id`         INT NOT NULL PRIMARY KEY,
+  `team_id`    INT NOT NULL,
+  `player_id`  INT NOT NULL,
+  `hidden`     TINYINT(1)  DEFAULT 0 NOT NULL,
+  `created_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+  `updated_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+  `deleted_at` DATETIME(3) NULL,
+    CONSTRAINT `uniq_team_id_player_id` UNIQUE (`team_id`, `player_id`),
+    CONSTRAINT `fk_team_player_player_id` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
+    CONSTRAINT `fk_team_player_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`)
+);
+
 
 CREATE TABLE IF NOT EXISTS `lineup` (
   `id` INT NOT NULL,
@@ -189,8 +203,8 @@ CREATE TABLE IF NOT EXISTS `betting`
     `choice`      JSON                                     NOT NULL,
     `values`    JSON                                     NOT NULL,
     `is_deleted`  TINYINT(1)                               NOT NULL,
-    `created_at`  DATETIME(3) default CURRENT_TIMESTAMP(3) NOT NULL,
-    `updated_at`  DATETIME(3) default CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+    `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
     CONSTRAINT `fk_betting_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
