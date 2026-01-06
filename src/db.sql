@@ -149,9 +149,9 @@ CREATE TABLE IF NOT EXISTS `team_player` (
   `team_id`    INT NOT NULL,
   `player_id`  INT NOT NULL,
   `hidden`     TINYINT(1)  DEFAULT 0 NOT NULL,
+  `is_deleted` TINYINT(1)  DEFAULT 0 NOT NULL,
   `created_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
   `updated_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
-  `deleted_at` DATETIME(3) NULL,
     CONSTRAINT `uniq_team_id_player_id` UNIQUE (`team_id`, `player_id`),
     CONSTRAINT `fk_team_player_player_id` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
     CONSTRAINT `fk_team_player_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`)
