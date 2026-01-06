@@ -8,10 +8,10 @@ const fs = require("fs"), path = require("path");
 async function mainLoop() {
     console.time("MAIN");
 
-    const permisions = await SyncAPI.getPermissions();
-
     const conn = await getConnection();
     try {
+        const permisions = await SyncAPI.getPermissions();
+        if (permisions == null) throw new Error("API Error");
         const [r] = await conn.query(`SELECT 1;`); // DB Check
         if (r == null) throw new Error(`DB Error`);
 
