@@ -197,8 +197,8 @@ CREATE TABLE IF NOT EXISTS `betting`
 (
     `id` INT NOT NULL PRIMARY KEY,
     `schedule_id` INT NOT NULL,
-    `region`      VARCHAR(10)                              NOT NULL,
-    `type`        VARCHAR(10)                              NOT NULL,
+    `region`      VARCHAR(100)                              NOT NULL,
+    `type`        VARCHAR(100)                              NOT NULL,
     `show_ref`    TINYINT(1)                               NOT NULL,
     `choice`      JSON                                     NOT NULL,
     `values`    JSON                                     NOT NULL,
