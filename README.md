@@ -48,7 +48,7 @@ API_KEY=발급받은_KEY docker compose up --pull always -d
 ```
 
 ---
-내부 DB 접속 정보
+## 내부 DB 접속 정보
 ```
 HOST:127.0.0.1
 PORT:3306
