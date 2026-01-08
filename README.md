@@ -5,7 +5,7 @@
 - OpenAPI Account
 ---
 ## Docker Image
-- Image: `public.ecr.aws/a451j818/escore/openapi-client`
+- Image: `public.ecr.aws/a451j818/escore/openapi`
 - Registry: AWS Public ECR
 ---
 ## 실행 방법
