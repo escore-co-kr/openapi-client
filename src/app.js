@@ -43,7 +43,9 @@ async function boot() {
     const conn = await getConnection(true);
     try {
         const sql = await fs.promises.readFile(path.resolve(__dirname, "db.sql"), "utf-8");
+        console.log("INIT/MIGRATE DB");
         await conn.query(sql);
+
 
         const [databases] = await conn.query(`SHOW DATABASES`);
         // @ts-ignore
@@ -59,8 +61,8 @@ async function boot() {
         console.error(JSON.stringify({ message: e.message, stack: e.stack }));
     } finally {
         try { await conn.end(); } catch { }
+        console.timeEnd("BOOT");
     }
-    console.timeEnd("BOOT");
 }
 
 (async () => {

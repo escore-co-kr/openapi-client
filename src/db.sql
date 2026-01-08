@@ -208,5 +208,9 @@ CREATE TABLE IF NOT EXISTS `betting`
     CONSTRAINT `fk_betting_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ALTER TABLE `betting`
+    MODIFY COLUMN `region` VARCHAR(100) NOT NULL,
+    MODIFY COLUMN `type`   VARCHAR(100) NOT NULL;
+
 SET FOREIGN_KEY_CHECKS = 1;
 
