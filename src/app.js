@@ -12,6 +12,7 @@ async function mainLoop() {
     try {
         const permisions = await SyncAPI.getPermissions();
         if (permisions == null) throw new Error("API Error");
+        console.log(`permisions=${JSON.stringify(permisions)}`);
         const [r] = await conn.query(`SELECT 1;`); // DB Check
         if (r == null) throw new Error(`DB Error`);
 

@@ -11,9 +11,9 @@ USE data;
 -- Table structure for key_store
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `key_store` (
-  `name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
   `raw` JSON DEFAULT NULL,
-  `memo` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `memo` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`name`)
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `key_store` (
 -- Table structure for sports
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `sports` (
-  `id` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` VARCHAR(10) NOT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`)
 );
@@ -30,10 +30,10 @@ CREATE TABLE IF NOT EXISTS `sports` (
 -- Table structure for country
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `country` (
-  `id` CHAR(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_kr` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name_en` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon_url` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` CHAR(2) NOT NULL,
+  `name_kr` VARCHAR(100) NOT NULL,
+  `name_en` VARCHAR(100) NOT NULL,
+  `icon_url` VARCHAR(255) DEFAULT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`),
@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS `country` (
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `league` (
   `id` INT NOT NULL,
-  `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sports` VARCHAR(10) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
   `icon_urls` JSON DEFAULT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
@@ -62,9 +62,9 @@ CREATE TABLE IF NOT EXISTS `league` (
 CREATE TABLE IF NOT EXISTS `season` (
   `id` INT NOT NULL,
   `league_id` INT DEFAULT NULL,
-  `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `country` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sports` VARCHAR(10) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `country` VARCHAR(10) DEFAULT NULL,
   `is_active` TINYINT(1) NOT NULL DEFAULT '0',
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
@@ -84,9 +84,9 @@ CREATE TABLE IF NOT EXISTS `season` (
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `team` (
   `id` INT NOT NULL,
-  `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `country` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sports` VARCHAR(10) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `country` VARCHAR(255) NULL,
   `icon_urls` JSON DEFAULT NULL,
   `is_deleted` TINYINT(1) NOT NULL DEFAULT '0',
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -100,18 +100,18 @@ CREATE TABLE IF NOT EXISTS `team` (
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `schedule` (
   `id` INT NOT NULL,
-  `sports` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sports` VARCHAR(10) NOT NULL,
   `league_id` INT NOT NULL,
   `season_id` INT NOT NULL,
-  `home_id` int DEFAULT NULL,
-  `away_id` int DEFAULT NULL,
+  `home_id` INT DEFAULT NULL,
+  `away_id` INT DEFAULT NULL,
   `start_at` DATETIME(3) NOT NULL,
-  `start_date` VARCHAR(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `start_date` VARCHAR(8) NOT NULL,
   `hidden` TINYINT(1) NOT NULL DEFAULT '0',
-  `status` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ended_status` VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `home_score` int DEFAULT NULL,
-  `away_score` int DEFAULT NULL,
+  `status` VARCHAR(10) NULL,
+  `ended_status` VARCHAR(10) NULL,
+  `home_score` INT DEFAULT NULL,
+  `away_score` INT DEFAULT NULL,
   `scores` JSON DEFAULT NULL,
   `clock` JSON DEFAULT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -132,10 +132,10 @@ CREATE TABLE IF NOT EXISTS `schedule` (
 
 CREATE TABLE IF NOT EXISTS `player` (
   `id` INT NOT NULL,
-  `name` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
   `profile` JSON DEFAULT NULL,
-  `country` VARCHAR(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image_url` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country` VARCHAR(10) DEFAULT NULL,
+  `image_url` VARCHAR(255) DEFAULT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`id`),
@@ -162,9 +162,9 @@ CREATE TABLE IF NOT EXISTS `lineup` (
   `id` INT NOT NULL,
   `schedule_id` INT NOT NULL,
   `team_id` INT NOT NULL,
-  `player_id` int DEFAULT NULL,
+  `player_id` INT DEFAULT NULL,
   `is_starting` TINYINT(1) DEFAULT NULL,
-  `type` VARCHAR(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` VARCHAR(10) NOT NULL,
   `meta` JSON DEFAULT NULL,
   `is_deleted` TINYINT(1) DEFAULT NULL,
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `lineup` (
   KEY `fk_lineup_team_id` (`team_id`),
   KEY `idx_updated_at` (`updated_at`,`id`),
   CONSTRAINT `fk_lineup_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 CREATE TABLE IF NOT EXISTS `player_stat` (
   `id` INT NOT NULL,
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `player_stat` (
   KEY `idx_updated_at` (`updated_at`,`id`),
   CONSTRAINT `fk_player_stat_player_id` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
   CONSTRAINT `fk_player_stat_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);
 
 CREATE TABLE IF NOT EXISTS `betting`
 (
@@ -205,12 +205,50 @@ CREATE TABLE IF NOT EXISTS `betting`
     `is_deleted`  TINYINT(1)                               NOT NULL,
     `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
     `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
-    CONSTRAINT `fk_betting_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    CONSTRAINT `fk_betting_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
+);
 
 ALTER TABLE `betting`
     MODIFY COLUMN `region` VARCHAR(100) NOT NULL,
     MODIFY COLUMN `type`   VARCHAR(100) NOT NULL;
+
+CREATE TABLE IF NOT EXISTS `stat_kbl_player`
+(
+    `id`          INT                                      NOT NULL PRIMARY KEY,
+    `season_id`   INT                                      NOT NULL,
+    `player_id`   INT                                      NOT NULL,
+    `game_code`   VARCHAR(100)                             NOT NULL,
+    `game_name`   VARCHAR(255)                             NOT NULL,
+    `subtab_key`  VARCHAR(100)                             NOT NULL,
+    `subtab_name` VARCHAR(255)                             NOT NULL,
+    `option_key`  VARCHAR(100)                             NOT NULL,
+    `option_name` VARCHAR(255)                             NOT NULL,
+    `stat`        JSON                                     NOT NULL,
+    `is_deleted`  TINYINT(1)                               NOT NULL,
+    `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+    CONSTRAINT `fk_player_id` FOREIGN KEY (`player_id`) REFERENCES `player` (`id`),
+    CONSTRAINT `fk_season_id` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `stat_kbl_team`
+(
+    `id`          INT                                      NOT NULL PRIMARY KEY,
+    `season_id`   INT                                      NOT NULL,
+    `team_id`   INT                                      NOT NULL,
+    `game_code`   VARCHAR(100)                             NOT NULL,
+    `game_name`   VARCHAR(255)                             NOT NULL,
+    `subtab_key`  VARCHAR(100)                             NOT NULL,
+    `subtab_name` VARCHAR(255)                             NOT NULL,
+    `option_key`  VARCHAR(100)                             NOT NULL,
+    `option_name` VARCHAR(255)                             NOT NULL,
+    `stat`        JSON                                     NOT NULL,
+    `is_deleted`  TINYINT(1)                               NOT NULL,
+    `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+    CONSTRAINT `fk_team_stat_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`),
+    CONSTRAINT `fk_team_stat_season_id` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`)
+);
 
 SET FOREIGN_KEY_CHECKS = 1;
 
