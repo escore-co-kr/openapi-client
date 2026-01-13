@@ -1,20 +1,30 @@
 services:
-  app:
-    image: public.ecr.aws/a4j1j8l8/escore/openapi
-    environment:
-      - MYSQL_HOST=127.0.0.1
-      - MYSQL_PORT=3306
-      - MYSQL_USER=root
-      - MYSQL_PASS=password
-      - API_KEY=${API_KEY:?API_KEY is required}
-    ports:
-      - 3306:3306
-      
   database:
     image: mysql
     restart: always
+    ports:
+      - "3306:3306"   # ← 외부 접근 가능
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./db:/var/lib/mysql
-    network_mode: "service:app" # app1의 네트워크를 공유
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-ppassword"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    stop_grace_period: 60s
+
+  app:
+    image: public.ecr.aws/a4j1j8l8/escore/openapi
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: database   # ← 중요
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASS: password
+      API_KEY: ${API_KEY:?API_KEY is required}
+    stop_signal: SIGTERM
+    stop_grace_period: 60s

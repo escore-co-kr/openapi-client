@@ -4,6 +4,7 @@ const mysql = require("mysql2/promise");
 const mods = require("./modules");
 const SyncAPI = require("./modules/SyncAPI");
 const fs = require("fs"), path = require("path");
+const status = { interrupted: false };
 
 async function mainLoop() {
     console.time("MAIN");
@@ -30,6 +31,7 @@ async function mainLoop() {
     }
 
     console.timeEnd("MAIN");
+    if (status.interrupted == true) return;
     setTimeout(mainLoop, 5000);
 }
 
@@ -66,10 +68,22 @@ async function boot() {
     }
 }
 
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+
+let ts = null;
+/**
+ * @param {string} signal
+ */
+async function gracefulShutdown(signal) {
+    console.warn(`Graceful shutdown initiated [${signal}]`);
+    status.interrupted = true;
+}
+
 (async () => {
     const success = await boot();
     if (success != true) return;
-    await mainLoop();
+    mainLoop();
 })();
 
 /**
