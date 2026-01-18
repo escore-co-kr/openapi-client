@@ -11,6 +11,7 @@
 
 #### 1. docker-compose.yml 다운로드
 ![docker-compose 다운로드](https://escore.co.kr/image/0c12c620-e4ce-4db0-80a1-2ead4b51a13b.png)
+https://raw.githubusercontent.com/escore-co-kr/openapi-client/refs/heads/master/docker-compose.yml
 
 ![docker-compose 다운로드2](https://escore.co.kr/image/7c98dbc4-74ef-4979-a870-aa24c782fd1c.png)
 
