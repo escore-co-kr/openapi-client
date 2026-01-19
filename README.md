@@ -9,11 +9,12 @@
 ---
 ### 실행 방법
 
-#### 1. docker-compose.yml 다운로드
+#### 1. docker-compose.yml 다운로드 
+- [openapi-client git](https://github.com/escore-co-kr/openapi-client)
 ![docker-compose 다운로드](https://escore.co.kr/image/0c12c620-e4ce-4db0-80a1-2ead4b51a13b.png)
-https://raw.githubusercontent.com/escore-co-kr/openapi-client/refs/heads/master/docker-compose.yml
-
 ![docker-compose 다운로드2](https://escore.co.kr/image/7c98dbc4-74ef-4979-a870-aa24c782fd1c.png)
+
+- [docker-compose.yml 문서 링크](https://github.com/escore-co-kr/openapi-client/blob/master/docker-compose.yml?raw=1)
 
 #### 2. 별도의 workspace로 저장
 - 폴더 기준으로 volume을 잡기 때문에 별도 관리 권고
