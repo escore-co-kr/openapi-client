@@ -4,23 +4,37 @@ const mysql = require("mysql2/promise");
 const mods = require("./modules");
 const SyncAPI = require("./modules/SyncAPI");
 const fs = require("fs"), path = require("path");
-const status = { interrupted: false };
+/**
+ * @type {{ interrupted: boolean, ts: null | NodeJS.Timeout, busy: boolean }}
+ */
+const status = { interrupted: false, ts: null, busy: false };
 
 async function mainLoop() {
+    status.ts = null;
+    if (status.interrupted) return;
     console.time("MAIN");
+    status.busy = true;
 
     const conn = await getConnection();
     try {
-        const permisions = await SyncAPI.getPermissions();
-        if (permisions == null) throw new Error("API Error");
-        console.log(`permisions=${JSON.stringify(permisions)}`);
+        const permissions = await SyncAPI.getPermissions();
+        if (permissions == null) throw new Error("API Error");
+        console.log(`permissions=${JSON.stringify(permissions)}`);
         const [r] = await conn.query(`SELECT 1;`); // DB Check
         if (r == null) throw new Error(`DB Error`);
 
         for (const mod of mods) {
+            if (process.env["DEBUG"] == "true") console.log("mod", mod);
+            if (status.interrupted) {
+                if (process.env["DEBUG"] == "true") console.log("status.interrupted");
+                break;
+            }
             const syncMod = /** @type {SyncAPI} */ (mod);
-            if (permisions.includes(syncMod.permision) == false) continue;
-            await syncMod.sync(conn);
+            if (permissions.includes(syncMod.permission) == false) {
+                if (process.env["DEBUG"] == "true") console.log("NO PERMISION", syncMod.permission);
+                continue;
+            }
+            await syncMod.sync(conn, status);
             await new Promise(n => setTimeout(n, 100));
         }
     } catch (e) {
@@ -28,11 +42,12 @@ async function mainLoop() {
         console.error(JSON.stringify({ message: e.message, stack: e.stack }));
     } finally {
         try { await conn.end(); } catch { }
+        status.busy = false;
+        console.timeEnd("MAIN");
     }
 
-    console.timeEnd("MAIN");
-    if (status.interrupted == true) return;
-    setTimeout(mainLoop, 5000);
+    if (status.interrupted) return;
+    status.ts = setTimeout(mainLoop, 5000);
 }
 
 async function boot() {
@@ -78,6 +93,14 @@ let ts = null;
 async function gracefulShutdown(signal) {
     console.warn(`Graceful shutdown initiated [${signal}]`);
     status.interrupted = true;
+    if (status.ts != null) {
+        clearTimeout(status.ts);
+        status.ts = null;
+    }
+    while (status.busy) {
+        await new Promise(n => setTimeout(n, 100));
+    }
+    process.exit(0);
 }
 
 (async () => {

@@ -21,5 +21,10 @@ module.exports = [
     new SyncAPI("bettings", "betting"),
     new SyncAPI("stats/kbl/players", "stat_kbl_player"),
     new SyncAPI("stats/kbl/teams", "stat_kbl_team"),
+    new SyncAPI("pandascore/assets", "pandascore_assets"),
+    new SyncAPI("pandascore/players", "pandascore_player"),
+    new SyncAPI("schedules/pandascore/games", "pandascore_schedule_games"),
+    new SyncAPI("schedules/pandascore/games/events", "pandascore_schedule_games_event"),
+    new SyncAPI("pandascore/opponents", "pandascore_schedule_opponents"),
 ];
 

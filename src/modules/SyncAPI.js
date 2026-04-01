@@ -33,17 +33,18 @@ class SyncAPI {
         this.#checkThrottle = checkThrottle;
     }
 
-    get permision() {
+    get permission() {
         return `/${this.#api}`;
     }
 
     /**
      * 
      * @param {import("mysql2/promise").Connection} conn 
+     * @param {{ interrupted: boolean }} status
      */
-    async sync(conn) {
+    async sync(conn, status) {
 
-        while (true) {
+        while (status.interrupted != true) {
             const cursor = new Cursor(conn, this.#table);
             const { lastChecked, ...context } = await cursor.getCurContext() ?? {};
             if (this.#fullScan == true && Date.now() - lastChecked < this.#checkThrottle) return;

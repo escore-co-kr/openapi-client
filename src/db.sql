@@ -193,8 +193,7 @@ CREATE TABLE IF NOT EXISTS `player_stat` (
   CONSTRAINT `fk_player_stat_schedule_id` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `betting`
-(
+CREATE TABLE IF NOT EXISTS `betting` (
     `id` INT NOT NULL PRIMARY KEY,
     `schedule_id` INT NOT NULL,
     `region`      VARCHAR(100)                              NOT NULL,
@@ -212,8 +211,7 @@ ALTER TABLE `betting`
     MODIFY COLUMN `region` VARCHAR(100) NOT NULL,
     MODIFY COLUMN `type`   VARCHAR(100) NOT NULL;
 
-CREATE TABLE IF NOT EXISTS `stat_kbl_player`
-(
+CREATE TABLE IF NOT EXISTS `stat_kbl_player` (
     `id`          INT                                      NOT NULL PRIMARY KEY,
     `season_id`   INT                                      NOT NULL,
     `player_id`   INT                                      NOT NULL,
@@ -231,8 +229,7 @@ CREATE TABLE IF NOT EXISTS `stat_kbl_player`
     CONSTRAINT `fk_season_id` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `stat_kbl_team`
-(
+CREATE TABLE IF NOT EXISTS `stat_kbl_team` (
     `id`          INT                                      NOT NULL PRIMARY KEY,
     `season_id`   INT                                      NOT NULL,
     `team_id`   INT                                      NOT NULL,
@@ -249,6 +246,58 @@ CREATE TABLE IF NOT EXISTS `stat_kbl_team`
     CONSTRAINT `fk_team_stat_team_id` FOREIGN KEY (`team_id`) REFERENCES `team` (`id`),
     CONSTRAINT `fk_team_stat_season_id` FOREIGN KEY (`season_id`) REFERENCES `season` (`id`)
 );
+
+CREATE TABLE IF NOT EXISTS `pandascore_assets` (
+    `id`         INT                                      NOT NULL,
+    `type`       VARCHAR(255)                             NOT NULL,
+    `raw`        JSON                                     NOT NULL,
+    `image_url`  VARCHAR(255)                             NULL,
+    `created_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+    PRIMARY KEY (`id`, `type`)
+);
+
+CREATE TABLE IF NOT EXISTS `pandascore_player` (
+    `id`         INT                                      NOT NULL PRIMARY KEY,
+    `name`       VARCHAR(255)                             NOT NULL,
+    `raw`        JSON                                     NOT NULL,
+    `created_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at` DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3)
+);
+
+CREATE TABLE IF NOT EXISTS `pandascore_schedule_games` (
+    `id`          BIGINT                                   NOT NULL PRIMARY KEY,
+    `schedule_id` INT                                      NOT NULL,
+    `game_id`     INT                                      NOT NULL,
+    `position`    INT                                      NOT NULL,
+    `raw`         JSON                                     NOT NULL,
+    `is_deleted`  TINYINT(1)                               NOT NULL,
+    `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+    CONSTRAINT `uniq_schedule_id_game_id` UNIQUE (`schedule_id`, `game_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `pandascore_schedule_games_event` (
+    `id`          BIGINT                                   NOT NULL PRIMARY KEY,
+    `schedule_id` INT                                      NOT NULL,
+    `game_id`     INT                                      NOT NULL,
+    `event_id`    INT                                      NOT NULL,
+    `raw`         JSON                                     NOT NULL,
+    `is_deleted`  TINYINT(1)                               NOT NULL,
+    `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+    CONSTRAINT `uniq_schedule_id_game_id_event_id` UNIQUE (`schedule_id`, `game_id`, `event_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `pandascore_schedule_opponents` (
+    `id`          INT                                      NOT NULL PRIMARY KEY,
+    `schedule_id` INT                                      NOT NULL,
+    `raw`         JSON                                     NOT NULL,
+    `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+    CONSTRAINT `uniq_schedule_id` UNIQUE (`schedule_id`)
+);
+
 
 SET FOREIGN_KEY_CHECKS = 1;
 
