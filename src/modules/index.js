@@ -26,5 +26,6 @@ module.exports = [
     new SyncAPI("schedules/pandascore/games", "pandascore_schedule_games"),
     new SyncAPI("schedules/pandascore/games/events", "pandascore_schedule_games_event"),
     new SyncAPI("pandascore/opponents", "pandascore_schedule_opponents"),
+    new SyncAPI("schedules/betsapi/bet365", "betsapi_schedule_bet365"),
 ];
 

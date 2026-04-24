@@ -298,6 +298,16 @@ CREATE TABLE IF NOT EXISTS `pandascore_schedule_opponents` (
     CONSTRAINT `uniq_schedule_id` UNIQUE (`schedule_id`)
 );
 
+CREATE TABLE IF NOT EXISTS `betsapi_schedule_bet365` (
+    `id`           INT                                      NOT NULL PRIMARY KEY,
+    `team_reverse` TINYINT(1)                               NOT NULL,
+    `raw`          JSON                                     NOT NULL,
+    `is_deleted`  TINYINT(1)                               NOT NULL,
+    `created_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+    `updated_at`  DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL ON UPDATE CURRENT_TIMESTAMP(3)
+);
+
+
 
 SET FOREIGN_KEY_CHECKS = 1;
 
